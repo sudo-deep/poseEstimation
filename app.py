@@ -11,11 +11,15 @@ pt = 0
 while True:
     success, img = cap.read()
     img = model.findPose(img)
-    lmList = model.getPosition(img)
-    # if len(lmList) != 0:
-    #     print(lmList[14])
-    if len(lmList) != 0:
-        print(model.getAngle(lmList[12], lmList[14], lmList[16]))
+    landmarks = model.getPosition(img)
+    for k, v in landmarks.items():
+        print(k, v.id)
+    # break
+
+    # if len(landmarks) != 0:
+    #     print(landmarks)
+    # if len(landmarks) != 0:
+    #     print(model.getAngle(landmarks[12], landmarks[14], landmarks[16]))
     ct = time.time()
     fps = 1/(ct-pt)
     pt = ct
