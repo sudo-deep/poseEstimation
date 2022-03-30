@@ -2,7 +2,7 @@ import cv2
 import time
 import mediapipe as mp
 import math
-
+import physiotherapyAssessment as pta
 
 class poseDetector():
 
@@ -72,14 +72,14 @@ class poseDetector():
     
     def getAngle(self, a, b, c):
         # slope of ab and bc
-        if b[1] == a[1]:
+        if b.x == a.x:
             m1 = math.atan(math.inf)
         else:
-            m1 = math.atan((b[2]-a[2])/(b[1]-a[1]))
-        if b[1] == c[1]:
+            m1 = math.atan((b.y-a.y)/(b.x-a.x))
+        if b.x == c.x:
             m2 = math.atan(math.inf)
         else:
-            m2 = math.atan((c[2]-b[2])/(c[1]-b[1]))
+            m2 = math.atan((c.y-b.y)/(c.x-b.x))
         # angle between ab and bc
         angle = math.degrees((m1-m2))
         if angle < 0:
