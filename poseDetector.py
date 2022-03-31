@@ -4,6 +4,7 @@ import mediapipe as mp
 import math
 import physiotherapyAssessment as pta
 
+
 class poseDetector():
 
     class landmark():
