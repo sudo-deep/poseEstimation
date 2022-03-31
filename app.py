@@ -198,29 +198,29 @@ while True:
     
 
     # check posture every 60 frames
-    if i % 30 == 0:
+    if i % 60 == 0:
 
-    #     # check if the posture is correct
-    #     if corrector.checkSlump():
-    #         print("Sit up, you are slumping!")
-    #         situpSound = mixer.Sound("situp.mp3")
-    #         situpSound.play()
-        
+        # check if the posture is correct
+        if corrector.checkSlump():
+            print("Sit up, you are slumping!")
+            situpSound = mixer.Sound("situp.mp3")
+            situpSound.play()
+    # if i % 30 == 0:
         # check shoulder movement score
-        if "LEFT_SHOULDER" in landmarks and "RIGHT_SHOULDER" in landmarks and "LEFT_ELBOW" in landmarks and "RIGHT_ELBOW" in landmarks:
+        # if "LEFT_SHOULDER" in landmarks and "RIGHT_SHOULDER" in landmarks and "LEFT_ELBOW" in landmarks and "RIGHT_ELBOW" in landmarks:
             
-            shoulderAssessment = pta.shoulderAssessment(landmarks=landmarks)
-            shoulderScore = shoulderAssessment.getScoreList()
-            leftAngle = int(180-shoulderScore["leftShoulderScore"])
-            # print("Shoulder Score: ", leftAngle)
-            rightAngle = int(shoulderScore["rightShoulderScore"])
-            # print("Shoulder Score: ", rightAngle)
-            if leftAngle > 160 and rightAngle > 160:
-                stage = "Up"
-            if leftAngle < 30 and rightAngle < 30 and stage == "Up":
-                stage = "Down"
-                counter += 1
-                print("Counter: ", counter)
+        #     shoulderAssessment = pta.shoulderAssessment(landmarks=landmarks)
+        #     shoulderScore = shoulderAssessment.getScoreList()
+        #     leftAngle = int(180-shoulderScore["leftShoulderScore"])
+        #     # print("Shoulder Score: ", leftAngle)
+        #     rightAngle = int(shoulderScore["rightShoulderScore"])
+        #     # print("Shoulder Score: ", rightAngle)
+        #     if leftAngle > 160 and rightAngle > 160:
+        #         stage = "Up"
+        #     if leftAngle < 30 and rightAngle < 30 and stage == "Up":
+        #         stage = "Down"
+        #         counter += 1
+        #         print("Counter: ", counter)
 
 
     # check fps 
