@@ -15,20 +15,20 @@ class shoulderAssessment():
             leftShoulderAngle = model.getAngle(self.landmarks["LEFT_ELBOW"], self.landmarks["LEFT_SHOULDER"], self.landmarks["LEFT_HIP"])
             leftElbowAngle = model.getAngle(self.landmarks["LEFT_SHOULDER"], self.landmarks["LEFT_ELBOW"], self.landmarks["LEFT_WRIST"])
             scores = {}
-            scores["leftElbowScore"] = (leftElbowAngle/180)*100
-            scores["leftShoulderScore"] = (leftShoulderAngle/180)*100
+            scores["leftElbowScore"] = leftElbowAngle
+            scores["leftShoulderScore"] = leftShoulderAngle
             
             rightShoulderAngle = model.getAngle(self.landmarks["RIGHT_ELBOW"], self.landmarks["RIGHT_SHOULDER"], self.landmarks["RIGHT_HIP"])
             rightElbowAngle = model.getAngle(self.landmarks["RIGHT_SHOULDER"], self.landmarks["RIGHT_ELBOW"], self.landmarks["RIGHT_WRIST"])
-            scores["rightElbowScore"] = (rightElbowAngle/180)*100
-            scores["rightShoulderScore"] = (rightShoulderAngle/180)*100
+            scores["rightElbowScore"] = rightElbowAngle
+            scores["rightShoulderScore"] = rightShoulderAngle
             scores["avgScore"] = sum(scores.values())/(len(scores))
             
             return(scores)
 
-    def getScore(self):
+    def getScoreList(self):
         arom = self.shoulderAROM(self.landmarks, self.scale)
 
-        score = arom.elevAbduction()["avgScore"]
+        score = arom.elevAbduction()
         
         return score
