@@ -14,7 +14,9 @@ from PIL import Image, ImageTk
 
 mixer.init()
 beepSound = mixer.Sound("beep.mp3")
-situpSound = mixer.Sound("situp.mp3")\
+situpSound = mixer.Sound("situp.mp3")
+congoShoulder = mixer.Sound("congoShoulder.mp3")
+congoNeck = mixer.Sound("congoNeck.mp3")
 
 
 def show_frame(frame):
@@ -90,7 +92,7 @@ def shoulderCode(frame):
     videoLabel = tk.Label(shoulderPage)
     videoLabel.pack(padx=20)
     counterVar = tk.StringVar()
-    counterVar.set("0")
+    counterVar.set("Counter: "+"0")
     counterLabel = tk.Label(shoulderPage, textvariable=counterVar, font=("Helvetica", 20))
     counterLabel.pack()
     
@@ -105,7 +107,7 @@ def shoulderCode(frame):
     def showVideoFrame():
 
         landmarks = model.getPosition(model.findPose(cap.read()[1]))
-        corrector = pc.postureCorrector(landmarks=landmarks)        
+        # print(cap.read()[0])
         cv2image = cv2.cvtColor(cap.read()[1], cv2.COLOR_BGR2RGBA)
         img = Image.fromarray(cv2image)
 
@@ -115,6 +117,11 @@ def shoulderCode(frame):
         videoLabel.after(40, showVideoFrame)
         # check shoulder movement score
         if not mixer.get_busy():
+            if dictStage["counter"] == 15:
+                congoShoulder.play()
+                counterVar.set("Congrats! You did great!")
+            
+                return
             if "LEFT_SHOULDER" in landmarks and "RIGHT_SHOULDER" in landmarks and "LEFT_ELBOW" in landmarks and "RIGHT_ELBOW" in landmarks:
                 
                 
@@ -124,7 +131,7 @@ def shoulderCode(frame):
                 # print("Shoulder Score: ", rightAngle)
                 # if leftAngle and rightAngle:
                    # beepSound.play()
-                print(int(leftAngle), int(rightAngle))
+                # print(int(leftAngle), int(rightAngle))
                 
                 if leftAngle > 160 and rightAngle > 160:
                     
@@ -137,19 +144,21 @@ def shoulderCode(frame):
                     dictStage["counter"] += 1
                     
                     print("Counter: ", dictStage["counter"])
-                    counterVar.set(str(dictStage["counter"]))
-                    window.update_idletasks() 
+                    counterVar.set("Counter: "+str(dictStage["counter"]))
+                    window.update_idletasks()
+
+    showVideoFrame()
 
 
-def legCode(frame):
+def neckCode(frame):
     show_frame(frame)
     # initialize the mixer
     mixer.init()
-    videoLabel = tk.Label(shoulderPage)
+    videoLabel = tk.Label(neckPage)
     videoLabel.pack(padx=20)
     counterVar = tk.StringVar()
-    counterVar.set("0")
-    counterLabel = tk.Label(shoulderPage, textvariable=counterVar, font=("Helvetica", 20))
+    counterVar.set("Counter: "+"0")
+    counterLabel = tk.Label(neckPage, textvariable=counterVar, font=("Helvetica", 20))
     counterLabel.pack()
     
     # loading the model
@@ -171,33 +180,28 @@ def legCode(frame):
         videoLabel.imgtk = imgtk
         videoLabel.configure(image=imgtk)
         videoLabel.after(40, showVideoFrame)
-        # check shoulder movement score
+        
+
         if not mixer.get_busy():
-            if "LEFT_SHOULDER" in landmarks and "RIGHT_SHOULDER" in landmarks and "LEFT_ELBOW" in landmarks and "RIGHT_ELBOW" in landmarks:
+            if dictStage["counter"] == 15:
+                congoNeck.play()
+                counterVar.set("Congrats! You did great!")
                 
-                
-                leftAngle = model.getAngle(landmarks["LEFT_HIP"], landmarks["LEFT_SHOULDER"], landmarks["LEFT_ELBOW"])
-                # print("Shoulder Score: ", leftAngle)
-                rightAngle = 180 - model.getAngle(landmarks["RIGHT_HIP"], landmarks["RIGHT_SHOULDER"], landmarks["RIGHT_ELBOW"])
-                # print("Shoulder Score: ", rightAngle)
-                # if leftAngle and rightAngle:
-                   # beepSound.play()
-                print(int(leftAngle), int(rightAngle))
-                
-                if leftAngle > 160 and rightAngle > 160:
-                    
+                # time.sleep(2)
+                return
+            try:
+                if not corrector.checkSlump():
                     # beepSound.play()
-
                     dictStage["stage"] = "Up"
-                if leftAngle < 30 and rightAngle < 30 and dictStage["stage"] == "Up":
-                    beepSound.play()
-                    dictStage["stage"] = "Down"
-                    dictStage["counter"] += 1
-                    
-                    print("Counter: ", dictStage["counter"])
-                    counterVar.set(str(dictStage["counter"]))
-                    window.update_idletasks()
-
+                elif corrector.checkSlump() and dictStage["stage"] == "Up":
+                        beepSound.play()
+                        dictStage["stage"] = "Down"
+                        dictStage["counter"] += 1
+                        print("Counter: ", dictStage["counter"])
+                        counterVar.set("Counter: "+str(dictStage["counter"]))
+                        window.update_idletasks()                        
+            except:
+                pass
     # initialise loop variables
 
 
@@ -205,18 +209,6 @@ def legCode(frame):
     # read the frame
     success, img = cap.read()
     img = model.findPose(img)
-
-    # get the landmarks
-
-
-    
-
-
-  
-
-
-
-
 
     showVideoFrame()
 
@@ -227,9 +219,9 @@ window.state('zoomed')
 window.rowconfigure(0, weight = 1)
 window.columnconfigure(0, weight = 1)
 
-homePage, posturePage, shoulderPage, legPage = tk.Frame(window), tk.Frame(window), tk.Frame(window), tk.Frame(window)
+homePage, posturePage, shoulderPage, neckPage = tk.Frame(window), tk.Frame(window), tk.Frame(window), tk.Frame(window)
 
-for frame in (homePage, shoulderPage, legPage, posturePage):
+for frame in (homePage, shoulderPage, neckPage, posturePage):
     frame.grid(row = 0, column = 0, sticky = 'nsew')
 
 # code for Home Page
@@ -240,6 +232,8 @@ shoulderAssessmentButton = ttk.Button(homePage, text = "Shoulder Assessment", co
 shoulderAssessmentButton.pack(pady = 50)
 postureCorrectorButton = ttk.Button(homePage, text = "Posture Corrector", command = lambda:postureCode(posturePage))
 postureCorrectorButton.pack(pady = 80)
+neckButton = ttk.Button(homePage, text = "Neck Assessment", command = lambda:neckCode(neckPage))
+neckButton.pack(pady = 110)
 
 # code for Shoulder Page
 shoulderTitle = ttk.Label(shoulderPage, text = "Shoulder Assessment", font = ("Helvetica", 50))
@@ -248,6 +242,9 @@ shoulderTitle.pack(fill="both")
 # code for Posture Page
 postureTitle = ttk.Label(posturePage, text = "Posture Corrector", font = ("Helvetica", 50))
 postureTitle.pack(fill="both")
+
+neckTitle = ttk.Label(neckPage, text = "Neck Assessment", font = ("Helvetica", 50))
+neckTitle.pack(fill="both")
 
 show_frame(homePage)
 window.mainloop()
