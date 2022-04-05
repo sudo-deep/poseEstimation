@@ -58,29 +58,11 @@ def postureCode(page):
                 # print("Sit up, you are slumping!")
                 
                 situpSound.play()
-            
-        
-    # initialise loop variables
-    # while True:
-    # i += 1
 
     # read the frame
     success, img = cap.read()
     img = model.findPose(img)
 
-    # get the landmarks
-    
-
-
-
-    # # check fps 
-    # ct = time.time()
-    # fps = 1/(ct-pt)
-    # pt = ct
-    # cv2.putText(img, str(int(fps)), (70, 50),
-    #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
-    # showVideoFrame(i)
     showVideoFrame()
 
 
