@@ -1,7 +1,8 @@
-from asyncio import staggered
+# from asyncio import staggered
 from turtle import right
 import cv2
 import time
+import json
 
 from matplotlib import container
 import physiotherapyAssessment as pta
@@ -124,6 +125,9 @@ def shoulderCode(frame):
                     beepSound.play()
                     dictStage["stage"] = "Down"
                     dictStage["counter"] += 1
+                    with open("database.json") as f:
+                        json.dump(dictStage, f)
+                    
                     
                     print("Counter: ", dictStage["counter"])
                     counterVar.set("Counter: "+str(dictStage["counter"]))
@@ -179,6 +183,8 @@ def neckCode(frame):
                         beepSound.play()
                         dictStage["stage"] = "Down"
                         dictStage["counter"] += 1
+                        with open("database.json", "w") as f:
+                            json.dump(dictStage, f)
                         print("Counter: ", dictStage["counter"])
                         counterVar.set("Counter: "+str(dictStage["counter"]))
                         window.update_idletasks()                        
@@ -195,8 +201,8 @@ def neckCode(frame):
     showVideoFrame()
 
 window = tk.Tk()
-window.title("Physiotherapy Assessment")
-window.state('zoomed')
+window.title("Rehabify")
+# window.state('zoomed')
 
 window.rowconfigure(0, weight = 1)
 window.columnconfigure(0, weight = 1)
